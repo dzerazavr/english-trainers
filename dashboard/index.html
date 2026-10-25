@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дашборд учителя · тренажёры</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+  <style>
+    .dash-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .updated { font-size: 14px; color: var(--ink-soft); margin-top: 10px; }
+
+    .login { max-width: 520px; margin: 40px auto; }
+    .login form { display: grid; gap: 14px; margin-top: 16px; }
+    .error { color: var(--orange-ink); background: var(--orange-tint); padding: 10px 14px; border-radius: 12px; font-size: 16px; }
+
+    /* вкладки учеников — таблетки */
+    .tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 8px 0 0; }
+    .tab {
+      appearance: none; cursor: pointer;
+      font: 700 15px/1.2 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink);
+      padding: 10px 18px; border: 2px solid var(--ink); border-radius: 999px;
+      background: var(--paper);
+      transition: background .15s, box-shadow .15s, transform .15s var(--ease);
+    }
+    .tab:hover { box-shadow: 3px 3px 0 var(--lavender); transform: translate(-1px, -1px); }
+    .tab[aria-selected="true"] { background: var(--olive-deep); color: var(--paper); box-shadow: 3px 3px 0 var(--ink); }
+    .tab__n {
+      display: inline-grid; place-items: center; min-width: 22px; height: 22px; margin-left: 8px; padding: 0 6px;
+      font: 700 12px/1 var(--font-body); letter-spacing: 0;
+      background: var(--butter); color: var(--ink); border-radius: 999px;
+    }
+    .tab--extra { font-style: italic; }
+
+    .student-info {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px;
+      padding: 18px 22px; margin-top: 18px;
+      background: var(--paper); border: 2px solid var(--ink); border-radius: 22px;
+      box-shadow: 6px 6px 0 var(--olive);
+    }
+    .student-info__name { font: italic 600 30px/1.1 var(--font-head); margin: 0; }
+    .student-info__meta { color: var(--ink-soft); font-size: 16px; }
+    .student-info__link { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-left: auto; font-size: 14px; }
+    .student-info__link code { background: var(--cream); padding: 6px 10px; border-radius: 8px; font-size: 13px; word-break: break-all; }
+
+    .t tr.clickable { cursor: pointer; }
+    .t tr.clickable:hover td { background: #F6EEDD; }
+    .t tr.is-selected td { background: var(--olive-tint); }
+
+    .filters {
+      display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: flex-end;
+      padding: 16px 20px; margin: 18px 0 0;
+      background: var(--paper); border: 2px solid var(--ink); border-radius: 22px;
+    }
+    .filters label { display: grid; gap: 4px; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+    .select {
+      font: 500 17px/1.3 var(--font-body); color: var(--ink); text-transform: none; letter-spacing: 0;
+      padding: 9px 36px 9px 12px; min-width: 190px;
+      border: 2px solid var(--ink-soft); border-radius: 12px; background: #FFFCF5;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232A1F26' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center; background-size: 18px;
+    }
+    .select:focus { outline: none; border-color: var(--ink); box-shadow: 4px 4px 0 var(--lavender); }
+
+    .dash .ex { margin: 64px 0 48px; }
+    .dash .ex.login { margin: 64px auto; }
+    .dash .ex__card { padding: 32px 34px 28px; }
+    .block-sub { color: var(--ink-soft); font-size: 16px; margin: -2px 0 16px; }
+    .empty { color: var(--ink-soft); font-size: 17px; padding: 8px 0; }
+
+    .people { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+    .person { padding: 18px 20px; border-radius: 20px; background: var(--paper); border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--c, var(--olive)); }
+    .person:nth-child(4n+1) { --c: var(--olive); }
+    .person:nth-child(4n+2) { --c: var(--orange); }
+    .person:nth-child(4n+3) { --c: var(--lavender); }
+    .person:nth-child(4n+4) { --c: var(--mustard); }
+    .person[role="button"]:hover { transform: translate(-1px, -2px); box-shadow: 7px 8px 0 var(--c); }
+    .person__name { font: italic 600 23px/1.2 var(--font-head); margin: 0 0 8px; }
+    .person__pct { font: 700 38px/1 var(--font-head); margin: 6px 0; }
+    .person__meta { font-size: 15px; color: var(--ink-soft); }
+    .person__page { font-size: 15px; margin-top: 4px; }
+
+    .table-wrap { overflow-x: auto; margin: 0 -6px; }
+    table.t { width: 100%; border-collapse: collapse; font-size: 16px; }
+    .t th { text-align: left; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-soft); font-weight: 700; padding: 8px 10px; border-bottom: 2px solid var(--line); white-space: nowrap; }
+    .t td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .t tr:last-child td { border-bottom: 0; }
+    .t td.num, .t th.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .t .wrong { color: var(--orange-ink); }
+    .t .right { color: var(--olive-ink); font-weight: 600; }
+    .t .dim { color: var(--ink-soft); font-size: 14px; }
+    .more { margin-top: 12px; }
+
+    .chart { position: relative; }
+    .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+    .chart .bar-hit { fill: transparent; cursor: default; }
+    .tip {
+      position: absolute; pointer-events: none; z-index: 5;
+      background: var(--ink); color: #fff; font-size: 14px; line-height: 1.35;
+      padding: 8px 12px; border-radius: 10px; white-space: nowrap;
+      transform: translate(-50%, calc(-100% - 10px));
+    }
+
+    .texts { display: grid; gap: 16px; }
+    .text-card { padding: 16px 20px; border-radius: 18px; background: #FCF1D6; border-left: 4px solid var(--mustard); }
+    .text-card__meta { font-size: 14px; color: var(--ink-soft); margin-bottom: 6px; }
+    .text-card__body { white-space: pre-wrap; font-size: 18px; line-height: 1.6; }
+
+    .demo-note { background: var(--lavender-tint); color: var(--lavender-ink); padding: 10px 16px; border-radius: 12px; font-size: 15px; margin-top: 14px; }
+  </style>
+</head>
+<body>
+  <main class="wrap wrap--wide dash">
+    <header class="page-head">
+      <div class="page-head__top">
+        <span class="kicker">@dzerazavr · для учителя</span>
+        <div class="dash-actions" id="actions" hidden>
+          <button class="btn btn--ghost btn--small" type="button" id="refresh">Обновить</button>
+          <a class="btn btn--ghost btn--small" id="sheet" target="_blank" rel="noopener" hidden>Открыть таблицу</a>
+          <button class="btn btn--ghost btn--small" type="button" id="logout">Выйти</button>
+        </div>
+      </div>
+      <h1 class="page-title">Дашборд учителя</h1>
+      <p class="page-sub">Результаты учеников по всем тренажёрам: кто что проходил, какие темы даются труднее, какие ошибки повторяются.</p>
+      <div class="updated" id="updated" aria-live="polite"></div>
+      <div class="demo-note" id="demo-note" hidden>Демо-режим: данные выдуманы, чтобы показать, как выглядит дашборд.</div>
+    </header>
+
+    <!-- вход -->
+    <section class="ex login" data-color="lavender" id="login" hidden>
+      <div class="ex__tab"><span class="ex__num">→</span> Вход</div>
+      <div class="ex__card">
+        <p class="ex__instr">Введите ключ учителя</p>
+        <p class="muted">Ключ вида <code>teacher-…</code> вы записали при настройке таблицы. Его же можно посмотреть в Apps Script: ⚙ Настройки проекта → Свойства скрипта → TEACHER_KEY.</p>
+        <form id="login-form" novalidate>
+          <label class="sr-only" for="key">Ключ учителя</label>
+          <input class="input" id="key" type="password" autocomplete="current-password" placeholder="teacher-…" required>
+          <div class="error" id="login-error" hidden></div>
+          <button class="btn" type="submit">Войти</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- дашборд -->
+    <div id="dash" hidden>
+      <nav class="tabs" id="tabs" role="tablist" aria-label="Ученики"></nav>
+      <div class="student-info" id="student-info" hidden></div>
+
+      <div class="filters" role="group" aria-label="Фильтры">
+        <label>Тренажёр<select class="select" id="f-page"></select></label>
+        <label>Период
+          <select class="select" id="f-period">
+            <option value="7">7 дней</option>
+            <option value="30" selected>30 дней</option>
+            <option value="90">3 месяца</option>
+            <option value="all">Всё время</option>
+          </select>
+        </label>
+      </div>
+
+      <section class="ex" data-color="olive">
+        <div class="ex__tab"><span class="ex__num">1</span> Последняя активность</div>
+        <div class="ex__card">
+          <p class="block-sub" id="people-sub"></p>
+          <div class="people" id="people"></div>
+        </div>
+      </section>
+
+      <section class="ex" data-color="lavender">
+        <div class="ex__tab"><span class="ex__num">2</span> По тренажёрам</div>
+        <div class="ex__card">
+          <p class="block-sub">Результаты по каждому тренажёру за выбранный период. Нажмите на строку, чтобы смотреть только этот тренажёр.</p>
+          <div class="table-wrap" id="pages"></div>
+        </div>
+      </section>
+
+      <section class="ex" data-color="mustard">
+        <div class="ex__tab"><span class="ex__num">3</span> Прохождения</div>
+        <div class="ex__card">
+          <p class="block-sub" id="sessions-sub"></p>
+          <div class="table-wrap" id="sessions"></div>
+        </div>
+      </section>
+
+      <section class="ex" data-color="orange">
+        <div class="ex__tab"><span class="ex__num">4</span> Ошибки по темам</div>
+        <div class="ex__card">
+          <p class="block-sub">Сколько пунктов решено с ошибкой (с первой или второй попытки) за выбранный период.</p>
+          <div class="chart" id="topics"></div>
+        </div>
+      </section>
+
+      <section class="ex" data-color="lavender">
+        <div class="ex__tab"><span class="ex__num">5</span> Частые ошибки</div>
+        <div class="ex__card">
+          <p class="block-sub">Одинаковые неверные ответы, сгруппированные по пункту. Сверху — те, что повторяются чаще.</p>
+          <div class="table-wrap" id="mistakes"></div>
+        </div>
+      </section>
+
+      <section class="ex" data-color="mustard">
+        <div class="ex__tab"><span class="ex__num">6</span> Письменные работы</div>
+        <div class="ex__card">
+          <div class="texts" id="texts"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../assets/js/config.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    var CFG = window.TRAINER_CONFIG || {};
+    var LS_KEY = 'et.teacherKey';
+    var LS_FILTERS = 'et.dashFilters';
+    var DEMO = /[?&]demo=1\b/.test(location.search);
+
+    var TOPICS = {
+      to_be: 'am / is / are', there_is_are: 'there is / are', plural: 'мн. число (-s)',
+      articles: 'a / an / the', vocab: 'слова', present_simple: 'Present Simple',
+      present_continuous: 'Present Continuous', writing: 'письмо'
+    };
+
+    var $ = function (id) { return document.getElementById(id); };
+    function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+    function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* недоступно */ } }
+    function lsDel(k) { try { localStorage.removeItem(k); } catch (e) { /* недоступно */ } }
+    function esc(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function pad(n) { return n < 10 ? '0' + n : String(n); }
+    function fmtDate(d) {
+      d = new Date(d);
+      if (isNaN(d)) return '—';
+      return pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    function fmtDur(sec) {
+      sec = Number(sec) || 0;
+      var m = Math.floor(sec / 60), s = sec % 60;
+      return m >= 60 ? Math.floor(m / 60) + ' ч ' + pad(m % 60) + ' мин' : m + ':' + pad(s);
+    }
+    function fmtNum(n) { return String(Math.round(Number(n) * 10) / 10).replace('.', ','); }
+    function isTrue(v) { return v === true || String(v).toUpperCase() === 'TRUE'; }
+
+    var data = null;
+    var filters = { student: 'all', page: 'all', period: '30' };
+    try { Object.assign(filters, JSON.parse(lsGet(LS_FILTERS) || '{}')); } catch (e) { /* старые настройки */ }
+    // вкладку ученика можно открыть прямой ссылкой: …/dashboard/#s=almina
+    var hashStudent = (location.hash.match(/[#&]s=([^&]+)/) || [])[1];
+    if (hashStudent) filters.student = decodeURIComponent(hashStudent);
+
+    // ---------- вход ----------
+
+    function showLogin(msg) {
+      $('login').hidden = false;
+      $('dash').hidden = true;
+      $('actions').hidden = true;
+      $('updated').textContent = '';
+      $('demo-note').hidden = true;
+      $('login-error').hidden = !msg;
+      $('login-error').textContent = msg || '';
+      setTimeout(function () { $('key').focus(); }, 50);
+    }
+
+    $('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var key = $('key').value.trim();
+      if (!key) { showLogin('Введите ключ.'); return; }
+      lsSet(LS_KEY, key);
+      load(key);
+    });
+
+    $('logout').addEventListener('click', function () {
+      lsDel(LS_KEY);
+      $('key').value = '';
+      data = null;
+      showLogin('');
+    });
+
+    $('refresh').addEventListener('click', function () {
+      load(DEMO ? 'demo' : lsGet(LS_KEY));
+    });
+
+    if (CFG.sheetUrl) { $('sheet').href = CFG.sheetUrl; $('sheet').hidden = false; }
+
+    // ---------- загрузка ----------
+
+    function load(key) {
+      $('updated').textContent = 'Загружаем данные…';
+      if (DEMO) { onData(demoData()); return; }
+      if (!CFG.scriptUrl) { showLogin('В config.js не указан адрес веб-приложения (scriptUrl).'); return; }
+      var url = CFG.scriptUrl + '?action=data&student=all&key=' + encodeURIComponent(key);
+      fetch(url, { redirect: 'follow' })
+        .then(function (r) { return r.json(); })
+        .then(function (json) {
+          if (!json.ok) {
+            if (json.error === 'bad_key') { lsDel(LS_KEY); showLogin('Ключ не подошёл. Проверьте его и попробуйте ещё раз.'); }
+            else showLogin('Таблица ответила ошибкой: ' + json.error);
+            return;
+          }
+          onData(json);
+        })
+        .catch(function () {
+          $('updated').textContent = '';
+          showLogin('Не удалось связаться с таблицей. Проверьте интернет и попробуйте ещё раз.');
+        });
+    }
+
+    function onData(json) {
+      data = json;
+      data.sessions = (data.sessions || []).map(function (s) {
+        s._t = new Date(s.timestamp).getTime() || 0;
+        return s;
+      });
+      data.mistakes = (data.mistakes || []).map(function (m) {
+        m._t = new Date(m.timestamp).getTime() || 0;
+        return m;
+      });
+      $('login').hidden = true;
+      $('dash').hidden = false;
+      $('actions').hidden = false;
+      $('demo-note').hidden = !DEMO;
+      $('updated').textContent = 'Обновлено: ' + fmtDate(new Date());
+      fillFilters();
+      render();
+    }
+
+    // ---------- фильтры ----------
+
+    function studentsList() {
+      var map = {};
+      (data.students || []).forEach(function (s) {
+        var id = String(s.student_id || '').trim();
+        if (!id) return;
+        map[id] = {
+          id: id, name: s['имя'] || id, active: s['активен'] === '' || isTrue(s['активен']), listed: true,
+          level: s['уровень'] || '', book: s['учебник'] || '', notes: s['заметки'] || ''
+        };
+      });
+      data.sessions.forEach(function (s) {
+        var id = String(s.student_id || '');
+        if (id && !map[id]) map[id] = { id: id, name: id, active: true, listed: false };
+      });
+      return Object.keys(map).map(function (k) { return map[k]; });
+    }
+    function nameOf(id) {
+      var s = studentsList().find(function (x) { return x.id === id; });
+      return s ? s.name : id;
+    }
+    function pagesList() {
+      var map = {};
+      (data.pages || []).forEach(function (p) { if (p.page_id) map[p.page_id] = p['название'] || p.page_id; });
+      data.sessions.forEach(function (s) { if (s.page_id && !map[s.page_id]) map[s.page_id] = s.page_title || s.page_id; });
+      return Object.keys(map).map(function (k) { return { id: k, title: map[k] }; });
+    }
+
+    function fillSelect(sel, items, value) {
+      sel.innerHTML = items.map(function (o) {
+        return '<option value="' + esc(o.value) + '">' + esc(o.label) + '</option>';
+      }).join('');
+      sel.value = items.some(function (o) { return o.value === value; }) ? value : items[0].value;
+    }
+
+    function fillFilters() {
+      var ids = studentsList().map(function (s) { return s.id; });
+      if (filters.student !== 'all' && ids.indexOf(filters.student) < 0) filters.student = 'all';
+      fillSelect($('f-page'), [{ value: 'all', label: 'Все тренажёры' }].concat(pagesList().map(function (p) {
+        return { value: p.id, label: p.title };
+      })), filters.page);
+      filters.page = $('f-page').value;
+      $('f-period').value = filters.period;
+    }
+
+    function saveFilters() { lsSet(LS_FILTERS, JSON.stringify(filters)); }
+
+    ['f-page', 'f-period'].forEach(function (id) {
+      $(id).addEventListener('change', function () {
+        filters.page = $('f-page').value;
+        filters.period = $('f-period').value;
+        saveFilters();
+        render();
+      });
+    });
+
+    function setStudent(id) {
+      filters.student = id;
+      saveFilters();
+      try { history.replaceState(null, '', id === 'all' ? location.pathname + location.search : '#s=' + encodeURIComponent(id)); } catch (e) { /* file:// */ }
+      render();
+    }
+    function setPage(id) {
+      filters.page = id;
+      $('f-page').value = id;
+      saveFilters();
+      render();
+    }
+
+    // вкладки: «Все ученики» + активные ученики из листа Students + те, кого там нет, но есть прохождения
+    function renderTabs() {
+      var st = studentsList().filter(function (s) { return s.active || s.id === filters.student; });
+      var count = function (id) {
+        return data.sessions.filter(function (x) { return x.student_id === id && x._t >= since(); }).length;
+      };
+      var tabs = [{ id: 'all', name: 'Все ученики', extra: false }].concat(st.map(function (s) {
+        return { id: s.id, name: s.name, extra: !s.listed };
+      }));
+      $('tabs').innerHTML = tabs.map(function (t) {
+        var n = t.id === 'all' ? '' : '<span class="tab__n">' + count(t.id) + '</span>';
+        return '<button type="button" role="tab" class="tab' + (t.extra ? ' tab--extra' : '') + '" data-id="' + esc(t.id) + '" aria-selected="' +
+          (t.id === filters.student) + '"' + (t.extra ? ' title="Этого ученика нет на листе Students"' : '') + '>' + esc(t.name) + n + '</button>';
+      }).join('');
+      $('tabs').querySelectorAll('.tab').forEach(function (b) {
+        b.addEventListener('click', function () { setStudent(b.getAttribute('data-id')); });
+      });
+    }
+
+    function siteBase() {
+      return location.href.split('#')[0].split('?')[0].replace(/dashboard\/(index\.html)?$/, '');
+    }
+
+    function renderInfo() {
+      var box = $('student-info');
+      if (filters.student === 'all') { box.hidden = true; return; }
+      var s = studentsList().find(function (x) { return x.id === filters.student; });
+      var meta = [s.level, s.book].filter(Boolean).join(' · ');
+      var link = siteBase() + '?s=' + encodeURIComponent(s.id) + '&n=' + encodeURIComponent(s.name);
+      box.hidden = false;
+      box.innerHTML =
+        '<div><p class="student-info__name">' + esc(s.name) + '</p>' +
+        '<div class="student-info__meta">' + esc(meta || 'id: ' + s.id) + (s.notes ? ' · ' + esc(s.notes) : '') +
+        (s.listed ? '' : ' · этого ученика нет на листе Students') + '</div></div>' +
+        '<div class="student-info__link"><span class="muted">Ссылка для ученика:</span><code id="student-link">' +
+          esc(siteBase() + '?s=' + s.id + '&n=' + s.name) + '</code>' +
+        '<button class="btn btn--ghost btn--small" type="button" id="copy-link">Скопировать</button></div>';
+      $('copy-link').addEventListener('click', function () {
+        var btn = this;
+        var done = function () { btn.textContent = 'Скопировано ✓'; setTimeout(function () { btn.textContent = 'Скопировать'; }, 2000); };
+        try { navigator.clipboard.writeText(link).then(done, function () { selectText(); }); } catch (e) { selectText(); }
+      });
+      function selectText() {
+        var r = document.createRange();
+        r.selectNodeContents($('student-link'));
+        var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      }
+    }
+
+    // сводка по каждому тренажёру (учитывает ученика и период, но не фильтр тренажёра)
+    function renderPagesTable() {
+      var groups = {};
+      data.sessions.filter(function (s) {
+        return (filters.student === 'all' || s.student_id === filters.student) && s._t >= since();
+      }).forEach(function (s) {
+        var g = groups[s.page_id] || (groups[s.page_id] = { id: s.page_id, title: s.page_title || s.page_id, list: [] });
+        g.list.push(s);
+      });
+      var list = Object.keys(groups).map(function (k) {
+        var g = groups[k];
+        g.list.sort(function (a, b) { return b._t - a._t; });
+        var pcts = g.list.map(function (s) { return Number(s.percent) || 0; });
+        g.last = g.list[0];
+        g.avg = Math.round(pcts.reduce(function (a, b) { return a + b; }, 0) / pcts.length);
+        g.best = Math.max.apply(null, pcts);
+        g.students = Object.keys(g.list.reduce(function (o, s) { o[s.student_id] = 1; return o; }, {})).length;
+        return g;
+      }).sort(function (a, b) { return b.last._t - a.last._t; });
+      if (!list.length) { $('pages').innerHTML = '<p class="empty">За выбранный период тренажёры не проходили.</p>'; return; }
+      var all = filters.student === 'all';
+      var html = '<table class="t"><thead><tr><th>Тренажёр</th>' + (all ? '<th class="num">Учеников</th>' : '') +
+        '<th class="num">Прохождений</th><th>Последнее</th><th class="num">Последний %</th><th class="num">Средний %</th><th class="num">Лучший %</th></tr></thead><tbody>' +
+        list.map(function (g) {
+          return '<tr class="clickable' + (filters.page === g.id ? ' is-selected' : '') + '" data-page="' + esc(g.id) + '" tabindex="0">' +
+            '<td>' + esc(g.title) + '</td>' + (all ? '<td class="num">' + g.students + '</td>' : '') +
+            '<td class="num">' + g.list.length + '</td>' +
+            '<td>' + fmtDate(g.last._t) + '</td>' +
+            '<td class="num"><strong>' + esc(g.last.percent) + '</strong></td>' +
+            '<td class="num">' + g.avg + '</td>' +
+            '<td class="num">' + g.best + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      if (filters.page !== 'all') {
+        html += '<div class="more"><button class="btn btn--ghost btn--small" type="button" id="all-pages">Показать все тренажёры вместе</button></div>';
+      }
+      $('pages').innerHTML = html;
+      $('pages').querySelectorAll('tr[data-page]').forEach(function (tr) {
+        var go = function () { var id = tr.getAttribute('data-page'); setPage(filters.page === id ? 'all' : id); };
+        tr.addEventListener('click', go);
+        tr.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      });
+      var allBtn = $('all-pages');
+      if (allBtn) allBtn.addEventListener('click', function () { setPage('all'); });
+    }
+
+    function since() {
+      return filters.period === 'all' ? 0 : Date.now() - Number(filters.period) * 864e5;
+    }
+    function match(row, usePeriod) {
+      if (filters.student !== 'all' && row.student_id !== filters.student) return false;
+      if (filters.page !== 'all' && row.page_id !== filters.page) return false;
+      if (usePeriod && row._t < since()) return false;
+      return true;
+    }
+
+    // ---------- блоки ----------
+
+    function render() {
+      renderTabs();
+      renderInfo();
+      renderPeople();
+      renderPagesTable();
+      renderSessions();
+      renderTopics();
+      renderMistakes();
+      renderTexts();
+    }
+
+    function renderPeople() {
+      var st = studentsList().filter(function (s) {
+        return filters.student === 'all' ? s.active : s.id === filters.student;
+      });
+      $('people-sub').textContent = filters.student === 'all'
+        ? 'Последнее прохождение каждого ученика (без учёта периода). Нажмите на карточку, чтобы открыть вкладку ученика.'
+        : 'Последнее прохождение (без учёта периода).';
+      if (!st.length) { $('people').innerHTML = '<p class="empty">Нет активных учеников. Добавьте строку на лист Students.</p>'; return; }
+      $('people').innerHTML = st.map(function (s) {
+        return personCard(s).replace('<div class="person">', '<div class="person"' +
+          (filters.student === 'all' ? ' role="button" tabindex="0" data-id="' + esc(s.id) + '" style="cursor:pointer"' : '') + '>');
+      }).join('');
+      $('people').querySelectorAll('.person[data-id]').forEach(function (el) {
+        var go = function () { setStudent(el.getAttribute('data-id')); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+        el.addEventListener('click', go);
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      });
+    }
+
+    function personCard(s) {
+      var mine = data.sessions.filter(function (x) {
+        return x.student_id === s.id && (filters.page === 'all' || x.page_id === filters.page);
+      }).sort(function (a, b) { return b._t - a._t; });
+      var inPeriod = mine.filter(function (x) { return x._t >= since(); }).length;
+      if (!mine.length) {
+        return '<div class="person"><p class="person__name">' + esc(s.name) + '</p><p class="person__meta">Пока нет прохождений</p></div>';
+      }
+      var last = mine[0];
+      return '<div class="person">' +
+        '<p class="person__name">' + esc(s.name) + '</p>' +
+        '<div class="person__meta">' + fmtDate(last._t) + '</div>' +
+        '<div class="person__pct">' + esc(last.percent) + ' %</div>' +
+        '<div class="person__page">' + esc(last.page_title || last.page_id) + '</div>' +
+        '<div class="person__meta">Прохождений за период: ' + inPeriod + '</div>' +
+      '</div>';
+    }
+
+    var sessionsLimit = 20;
+    function renderSessions() {
+      var rows = data.sessions.filter(function (s) { return match(s, true); })
+        .sort(function (a, b) { return b._t - a._t; });
+      var avg = rows.length ? Math.round(rows.reduce(function (sum, s) { return sum + Number(s.percent || 0); }, 0) / rows.length) : 0;
+      $('sessions-sub').textContent = rows.length
+        ? 'Прохождений: ' + rows.length + ' · средний результат: ' + avg + ' %'
+        : '';
+      if (!rows.length) { $('sessions').innerHTML = '<p class="empty">За выбранный период прохождений нет.</p>'; return; }
+      var showName = filters.student === 'all';
+      var html = '<table class="t"><thead><tr><th>Дата</th>' + (showName ? '<th>Ученик</th>' : '') +
+        '<th>Страница</th><th class="num">Баллы</th><th class="num">%</th><th class="num">Время</th><th class="num">Ошибок</th></tr></thead><tbody>' +
+        rows.slice(0, sessionsLimit).map(function (s) {
+          return '<tr><td>' + fmtDate(s._t) + '</td>' +
+            (showName ? '<td>' + esc(nameOf(s.student_id)) + '</td>' : '') +
+            '<td>' + esc(s.page_title || s.page_id) + '</td>' +
+            '<td class="num">' + fmtNum(s.score) + ' / ' + esc(s.max_score) + '</td>' +
+            '<td class="num"><strong>' + esc(s.percent) + '</strong></td>' +
+            '<td class="num">' + fmtDur(s.duration_sec) + '</td>' +
+            '<td class="num">' + esc(s.mistakes_count) + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      if (rows.length > sessionsLimit) {
+        html += '<div class="more"><button class="btn btn--ghost btn--small" type="button" id="more-sessions">Показать ещё (' + (rows.length - sessionsLimit) + ')</button></div>';
+      }
+      $('sessions').innerHTML = html;
+      var more = $('more-sessions');
+      if (more) more.addEventListener('click', function () { sessionsLimit += 50; renderSessions(); });
+    }
+
+    // горизонтальные полоски на SVG: одна тема — одна полоска
+    function renderTopics() {
+      var seen = {};
+      var counts = {};
+      data.mistakes.filter(function (m) { return match(m, true); }).forEach(function (m) {
+        var key = m.session_id + '|' + m.item_id;      // пункт с ошибкой считаем один раз
+        if (seen[key]) return;
+        seen[key] = true;
+        String(m.topic || 'другое').split('+').forEach(function (t) {
+          t = t.trim() || 'другое';
+          counts[t] = (counts[t] || 0) + 1;
+        });
+      });
+      var list = Object.keys(counts).map(function (t) { return { t: t, n: counts[t] }; })
+        .sort(function (a, b) { return b.n - a.n; });
+      var box = $('topics');
+      if (!list.length) { box.innerHTML = '<p class="empty">Ошибок за выбранный период нет.</p>'; return; }
+
+      var W = 720, labelW = 170, valueW = 48, rowH = 40, barH = 18;
+      var max = list[0].n;
+      var plotW = W - labelW - valueW;
+      var H = list.length * rowH;
+      var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Ошибки по темам: ' +
+        esc(list.map(function (d) { return (TOPICS[d.t] || d.t) + ' — ' + d.n; }).join(', ')) + '">';
+      list.forEach(function (d, i) {
+        var y = i * rowH;
+        var w = Math.max(4, d.n / max * plotW);
+        var cy = y + rowH / 2;
+        svg += '<g class="bar" data-tip="' + esc((TOPICS[d.t] || d.t) + ': ' + d.n + ' ' + plural(d.n)) + '">' +
+          '<text x="' + (labelW - 12) + '" y="' + cy + '" text-anchor="end" dominant-baseline="central" font-size="15" fill="#2A1F26">' + esc(TOPICS[d.t] || d.t) + '</text>' +
+          '<rect x="' + labelW + '" y="' + (cy - barH / 2) + '" width="' + plotW + '" height="' + barH + '" rx="4" fill="#EADFC7"/>' +
+          '<rect x="' + labelW + '" y="' + (cy - barH / 2) + '" width="' + w + '" height="' + barH + '" rx="4" fill="#D9682B"/>' +
+          '<text x="' + (labelW + w + 8) + '" y="' + cy + '" dominant-baseline="central" font-size="15" font-weight="600" fill="#2A1F26">' + d.n + '</text>' +
+          '<rect class="bar-hit" x="0" y="' + y + '" width="' + W + '" height="' + rowH + '"/>' +
+        '</g>';
+      });
+      svg += '</svg>';
+      box.innerHTML = svg + '<div class="tip" hidden></div>';
+
+      var tip = box.querySelector('.tip');
+      box.querySelectorAll('.bar').forEach(function (g) {
+        g.addEventListener('mousemove', function (e) {
+          var r = box.getBoundingClientRect();
+          tip.textContent = g.getAttribute('data-tip');
+          tip.hidden = false;
+          tip.style.left = (e.clientX - r.left) + 'px';
+          tip.style.top = (e.clientY - r.top) + 'px';
+        });
+        g.addEventListener('mouseleave', function () { tip.hidden = true; });
+      });
+    }
+    function plural(n) {
+      var a = n % 10, b = n % 100;
+      if (a === 1 && b !== 11) return 'пункт';
+      if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return 'пункта';
+      return 'пунктов';
+    }
+
+    var mistakesLimit = 25;
+    function renderMistakes() {
+      var groups = {};
+      data.mistakes.filter(function (m) { return match(m, true); }).forEach(function (m) {
+        var ans = String(m.student_answer).trim();
+        var key = m.page_id + '|' + m.item_id + '|' + ans.toLowerCase();
+        var g = groups[key] || (groups[key] = { m: m, ans: ans, n: 0, who: {}, last: 0 });
+        g.n++;
+        g.who[m.student_id] = true;
+        g.last = Math.max(g.last, m._t);
+      });
+      var list = Object.keys(groups).map(function (k) { return groups[k]; })
+        .sort(function (a, b) { return b.n - a.n || b.last - a.last; });
+      if (!list.length) { $('mistakes').innerHTML = '<p class="empty">Ошибок за выбранный период нет.</p>'; return; }
+      var showName = filters.student === 'all';
+      var html = '<table class="t"><thead><tr><th>Пункт</th><th>Ответ ученика</th><th>Правильно</th><th class="num">Раз</th>' +
+        (showName ? '<th>Кто</th>' : '') + '</tr></thead><tbody>' +
+        list.slice(0, mistakesLimit).map(function (g) {
+          return '<tr><td>' + esc(g.m.prompt) + '<div class="dim">' + esc(g.m.exercise_title) + ' · ' + esc(String(g.m.topic).split('+').map(function (t) { return TOPICS[t] || t; }).join(' + ')) + '</div></td>' +
+            '<td class="wrong" lang="en">' + esc(g.ans) + '</td>' +
+            '<td class="right" lang="en">' + esc(g.m.correct_answer) + '</td>' +
+            '<td class="num"><strong>' + g.n + '</strong></td>' +
+            (showName ? '<td>' + esc(Object.keys(g.who).map(nameOf).join(', ')) + '</td>' : '') + '</tr>';
+        }).join('') + '</tbody></table>';
+      if (list.length > mistakesLimit) {
+        html += '<div class="more"><button class="btn btn--ghost btn--small" type="button" id="more-mistakes">Показать ещё (' + (list.length - mistakesLimit) + ')</button></div>';
+      }
+      $('mistakes').innerHTML = html;
+      var more = $('more-mistakes');
+      if (more) more.addEventListener('click', function () { mistakesLimit += 50; renderMistakes(); });
+    }
+
+    function renderTexts() {
+      var rows = data.sessions.filter(function (s) { return match(s, true) && String(s.free_text || '').trim(); })
+        .sort(function (a, b) { return b._t - a._t; });
+      if (!rows.length) { $('texts').innerHTML = '<p class="empty">Письменных работ за выбранный период нет.</p>'; return; }
+      $('texts').innerHTML = rows.map(function (s) {
+        return '<article class="text-card">' +
+          '<div class="text-card__meta">' + fmtDate(s._t) + ' · ' + esc(nameOf(s.student_id)) + ' · ' + esc(s.page_title || s.page_id) + '</div>' +
+          '<div class="text-card__body" lang="en">' + esc(s.free_text) + '</div></article>';
+      }).join('');
+    }
+
+    // ---------- демо-данные (?demo=1) ----------
+
+    function demoData() {
+      var now = Date.now(), day = 864e5;
+      var page = { id: 'spotlight7-u01-errors', title: 'City mouse or country mouse? — Fix it!' };
+      function sess(student, daysAgo, score, mistakes, text) {
+        return { timestamp: new Date(now - daysAgo * day).toISOString(), student_id: student, page_id: page.id, page_title: page.title,
+          session_id: student + daysAgo, score: score, max_score: 78, percent: Math.round(score / 78 * 100),
+          duration_sec: 900 + Math.round(daysAgo * 97) % 600, mistakes_count: mistakes, mistakes_by_topic: '{}', free_text: text || '' };
+      }
+      function mis(student, daysAgo, item, prompt, ans, right, topic, ex) {
+        return { timestamp: new Date(now - daysAgo * day).toISOString(), student_id: student, page_id: page.id, page_title: page.title,
+          exercise_id: item.split('-')[0], exercise_title: ex, item_id: item, prompt: prompt, student_answer: ans, correct_answer: right,
+          is_correct: false, attempt: 1, topic: topic, session_id: student + daysAgo };
+      }
+      return {
+        ok: true,
+        students: [
+          { student_id: 'almina', 'имя': 'Альмина', 'уровень': 'A2', 'учебник': 'Spotlight 7', 'активен': true, 'заметки': '' },
+          { student_id: 'kira', 'имя': 'Кира', 'уровень': 'A2', 'учебник': 'Spotlight 6', 'активен': true, 'заметки': 'занятия по вторникам' },
+          { student_id: 'mark', 'имя': 'Марк', 'уровень': 'B1', 'учебник': 'Spotlight 8', 'активен': true, 'заметки': '' }
+        ],
+        pages: [{ page_id: page.id, 'название': page.title }, { page_id: 'theory-to-be', 'название': 'Theory: am / is / are' }],
+        sessions: [
+          { timestamp: new Date(now - 1.5 * day).toISOString(), student_id: 'almina', page_id: 'theory-to-be', page_title: 'Theory: am / is / are',
+            session_id: 'a-t1', score: 9, max_score: 10, percent: 90, duration_sec: 420, mistakes_count: 1, mistakes_by_topic: '{}', free_text: '' },
+          { timestamp: new Date(now - 6 * day).toISOString(), student_id: 'almina', page_id: 'theory-to-be', page_title: 'Theory: am / is / are',
+            session_id: 'a-t2', score: 7, max_score: 10, percent: 70, duration_sec: 510, mistakes_count: 3, mistakes_by_topic: '{}', free_text: '' },
+          sess('almina', 0.2, 71.5, 10, 'I live in a small town. It is quiet and there is a big park. There are two cinemas. I am a country mouse!'),
+          sess('almina', 3, 60, 18),
+          sess('kira', 1, 66, 14, 'I live in a big city. It is noisy, but there are a lot of shops and cinemas. I am a city mouse.')
+        ],
+        mistakes: [
+          mis('almina', 0.2, 'ex3-3', 'The streets ___ crowded.', 'is', 'are', 'to_be', 'am / is / are'),
+          mis('almina', 3, 'ex3-3', 'The streets ___ crowded.', 'is', 'are', 'to_be', 'am / is / are'),
+          mis('kira', 1, 'ex3-3', 'The streets ___ crowded.', 'is', 'are', 'to_be', 'am / is / are'),
+          mis('almina', 0.2, 'ex7-5', 'city', 'citys', 'cities', 'plural', 'One → many'),
+          mis('kira', 1, 'ex7-5', 'city', 'citys', 'cities', 'plural', 'One → many'),
+          mis('almina', 0.2, 'ex9-5', '___ London is big.', 'the', '—', 'articles', 'a / an / the / —'),
+          mis('almina', 3, 'ex10-2', 'I live in small town.', 'I live in small town.', 'I live in a small town.', 'articles', 'Fix the mistake'),
+          mis('kira', 1, 'ex5-5', '___ any shops in the village?', 'There are', 'Are there', 'there_is_are', 'There is / there are'),
+          mis('almina', 3, 'ex10-5', 'There is a lot of parks.', 'There is a lot of parks', 'There are a lot of parks.', 'there_is_are', 'Fix the mistake'),
+          mis('kira', 1, 'ex4-1', 'I happy in the city.', 'I happy in the city', 'I am happy in the city.', 'to_be', 'Add the missing verb'),
+          mis('almina', 3, 'ex1-6', 'low rate of unemployment', 'высокий уровень безработицы', 'низкий уровень безработицы', 'vocab', 'Words'),
+          mis('almina', 0.2, 'ex10-6', 'My sister 10 and she is student.', 'My sister is 10 and she is student.', 'My sister is 10 and she is a student.', 'to_be+articles', 'Fix the mistake')
+        ]
+      };
+    }
+
+    // ---------- старт ----------
+
+    if (DEMO) load('demo');
+    else if (lsGet(LS_KEY)) load(lsGet(LS_KEY));
+    else showLogin('');
+  })();
+  </script>
+</body>
+</html>

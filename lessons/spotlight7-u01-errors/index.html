@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>City mouse or country mouse? — Fix it! · Spotlight 7</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/theme.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="../../assets/js/config.js"></script>
+  <script src="../../assets/js/tracker.js"></script>
+  <script src="../../assets/js/exercises.js"></script>
+  <script>
+  /* ===================== ДАННЫЕ СТРАНИЦЫ =====================
+     Разметка в full и hint: {s|подлежащее} {v|глагол} {e|окончание} {a|артикль}
+     ========================================================== */
+  var PAGE = {
+    id: 'spotlight7-u01-errors',
+    title: 'City mouse or country mouse? — Fix it!',
+    kicker: 'Spotlight 7 · Урок 1 · работа над ошибками',
+    subtitle: 'Повторяем слова урока и отрабатываем ошибки: am / is / are, there is / there are, -s во множественном числе, a / an / the.',
+    exercises: [
+
+      { id: 'ex1', type: 'match', title: 'Words', topic: 'vocab', color: 'olive', roundSize: 5,
+        instr: 'Match the phrases with their translations.',
+        hint: 'Перетащи перевод к английской фразе. Можно и без мышки-перетаскивания: нажми на карточку, потом на место.',
+        wrongHint: 'Не та пара. Посмотри на ключевое слово фразы и попробуй ещё раз.',
+        items: [
+          { text: 'heavy traffic', answer: 'плотное движение, пробки' },
+          { text: 'constant noise and pollution', answer: 'постоянный шум и загрязнение' },
+          { text: 'convenient public transport', answer: 'удобный общественный транспорт' },
+          { text: 'crowded streets', answer: 'многолюдные улицы' },
+          { text: 'high cost of living', answer: 'высокая стоимость жизни' },
+          { text: 'low rate of unemployment', answer: 'низкий уровень безработицы' },
+          { text: 'high rate of unemployment', answer: 'высокий уровень безработицы' },
+          { text: 'lead an unhealthy lifestyle', answer: 'вести нездоровый образ жизни' },
+          { text: 'high quality lifestyle', answer: 'высокое качество жизни' },
+          { text: 'shops, cinemas and theatres', answer: 'магазины, кинотеатры и театры' },
+          { text: 'fresh air', answer: 'свежий воздух' },
+          { text: 'feeling isolated', answer: 'чувство оторванности от людей' },
+          { text: 'peace and quiet', answer: 'тишина и покой' },
+          { text: 'friendly, helpful people', answer: 'дружелюбные, отзывчивые люди' },
+          { text: 'beautiful landscapes', answer: 'красивые пейзажи' }
+        ] },
+
+      { id: 'ex2', type: 'gapBank', title: 'Words in context', topic: 'vocab', color: 'mustard',
+        instr: 'Complete the sentences with the words from the box.',
+        wrongHint: 'Перечитай предложение целиком: какое слово подходит по смыслу?',
+        items: [
+          { text: 'There are cars everywhere in the city. There is a lot of ___.', answer: 'heavy traffic', hint: 'Машины повсюду — значит, на дорогах пробки.' },
+          { text: 'I love the village because of the ___. There is no noise at all.', answer: 'peace and quiet', hint: 'Нет шума — значит, тишина и покой.' },
+          { text: 'Life in Moscow is expensive. The ___ is high.', answer: 'cost of living', hint: 'Дорого жить — это высокая стоимость жизни.' },
+          { text: 'You can breathe ___ in the country.', answer: 'fresh air', hint: 'Чем дышат за городом?' },
+          { text: 'The buses and the metro are fast. Public transport is ___.', answer: 'convenient', hint: 'Быстрые автобусы и метро — транспорт удобный.' },
+          { text: 'There are too many people. The streets are ___.', answer: 'crowded', hint: 'Слишком много людей — улицы многолюдные.' },
+          { text: 'Sarah lives far from other people. She sometimes feels ___.', answer: 'isolated', hint: 'Далеко от людей — чувствуешь себя оторванным.' },
+          { text: 'Many people have no job. There is a high rate of ___.', answer: 'unemployment', hint: 'Нет работы — это безработица.' }
+        ] },
+
+      { id: 'ex3', type: 'choice', title: 'am / is / are', topic: 'to_be', color: 'orange',
+        instr: 'Choose am, is or are.', options: ['am', 'is', 'are'],
+        hint: '{s|I} → {v|am} · один человек или предмет → {v|is} · много → {v|are}',
+        items: [
+          { text: 'I ___ 13.', answer: 'am', full: '{s|I} {v|am} 13.', hint: 'Подлежащее — {s|I}. С I используется особая форма.' },
+          { text: 'My town ___ small.', answer: 'is', full: '{s|My town} {v|is} small.', hint: '{s|My town} — один город или много?' },
+          { text: 'The streets ___ crowded.', answer: 'are', full: '{s|The streets} {v|are} crowded.', hint: '{s|The streets} — одна улица или много?' },
+          { text: 'Sarah ___ from Scotland.', answer: 'is', full: '{s|Sarah} {v|is} from Scotland.', hint: '{s|Sarah} — один человек или много?' },
+          { text: 'We ___ happy in the country.', answer: 'are', full: '{s|We} {v|are} happy in the country.', hint: '{s|We} — «мы»: один человек или несколько?' },
+          { text: 'The air ___ fresh here.', answer: 'is', full: '{s|The air} {v|is} fresh here.', hint: '{s|The air} — это одно (воздух), не много.' },
+          { text: 'My friends ___ very helpful.', answer: 'are', full: '{s|My friends} {v|are} very helpful.', hint: '{s|My friends} — один друг или много?' },
+          { text: 'I ___ a city mouse!', answer: 'am', full: '{s|I} {v|am} a city mouse!', hint: 'Подлежащее — {s|I}. С I используется особая форма.' }
+        ] },
+
+      { id: 'ex4', type: 'typeFix', title: 'Add the missing verb', topic: 'to_be', color: 'lavender',
+        instr: 'Something is missing! Add am, is or are and write the sentence.',
+        hint: 'В английском в каждом предложении нужен глагол. По-русски «Я счастлива», а по-английски «{s|I} {v|am} happy».',
+        wrongHint: 'Найди подлежащее и поставь после него {v|am}, {v|is} или {v|are}.',
+        items: [
+          { text: 'I happy in the city.', full: '{s|I} {v|am} happy in the city.', hint: 'После {s|I} нужен глагол. Какая форма идёт с I?' },
+          { text: 'London very big.', full: '{s|London} {v|is} very big.', hint: '{s|London} — один город. Какой глагол поставим после него?' },
+          { text: 'The people friendly.', full: '{s|The people} {v|are} friendly.', hint: '{s|The people} — это много людей.' },
+          { text: 'My school near my house.', full: '{s|My school} {v|is} near my house.', hint: '{s|My school} — одна школа. Глагол ставим сразу после неё.' },
+          { text: 'We tired today.', full: '{s|We} {v|are} tired today.', hint: 'После {s|We} не хватает глагола.' },
+          { text: 'Life in the country quiet.', full: '{s|Life in the country} {v|is} quiet.', hint: 'Подлежащее — {s|Life in the country} (одна жизнь). Глагол — перед quiet.' }
+        ] },
+
+      { id: 'ex5', type: 'choice', title: 'There is / there are', topic: 'there_is_are', color: 'berry',
+        instr: 'Choose the correct words.', options: ['There is', 'There are', 'Is there', 'Are there'],
+        hint: 'Один предмет → {v|there is}, много → {v|there are}. В вопросе меняем местами: {v|Is there}…? {v|Are there}…?',
+        items: [
+          { text: '___ a big park in my town.', answer: 'There is', full: '{v|There is} {a|a} big park in my town.', hint: '{a|a} big park — один парк. Это утверждение, не вопрос.' },
+          { text: '___ a lot of cars in the city.', answer: 'There are', full: '{v|There are} a lot of cars in the city.', hint: 'a lot of car{e|s} — много машин.' },
+          { text: '___ two cinemas near my house.', answer: 'There are', full: '{v|There are} two cinema{e|s} near my house.', hint: 'two cinema{e|s} — больше одного.' },
+          { text: '___ a farm near the village.', answer: 'There is', full: '{v|There is} {a|a} farm near the village.', hint: '{a|a} farm — одна ферма.' },
+          { text: '___ any shops in the village?', answer: 'Are there', full: '{v|Are there} any shop{e|s} in the village?', hint: 'В конце знак вопроса, а shop{e|s} — много.' },
+          { text: '___ a swimming pool at your school?', answer: 'Is there', full: '{v|Is there} {a|a} swimming pool at your school?', hint: 'Это вопрос, а бассейн — один.' }
+        ] },
+
+      { id: 'ex6', type: 'order', title: 'Build the sentence', topic: 'there_is_are', color: 'olive',
+        instr: 'Put the words in the correct order.',
+        hint: 'Порядок: {v|There is / There are} + что + где. Или: {s|кто} + {v|am / is / are} + … Точку поставим сами.',
+        wrongHint: 'Порядок слов не тот. Начни с There или с подлежащего.',
+        items: [
+          { words: ['are', 'many', 'There', 'shops', 'in', 'my', 'town'], full: '{v|There are} many shop{e|s} in my town.', topics: ['there_is_are'], hint: 'Начни с There, потом are.' },
+          { words: ['is', 'a', 'There', 'park', 'near', 'my', 'house'], full: '{v|There is} {a|a} park near my house.', topics: ['there_is_are'], hint: 'Начни с There is, потом что: a park.' },
+          { words: ['streets', 'The', 'are', 'crowded'], full: '{s|The streets} {v|are} crowded.', topics: ['to_be'], hint: 'Сначала подлежащее: The streets.' },
+          { words: ['am', 'I', 'a', 'country', 'mouse'], full: '{s|I} {v|am} {a|a} country mouse.', topics: ['to_be', 'articles'], hint: 'Сначала {s|I}, потом {v|am}, потом a country mouse.' },
+          { words: ['there', 'Is', 'a', 'cinema', 'in', 'your', 'town', '?'], full: '{v|Is there} {a|a} cinema in your town?', topics: ['there_is_are'], hint: 'Это вопрос: {v|Is there} в начале, ? в конце.' }
+        ] },
+
+      { id: 'ex7', type: 'typeWord', title: 'One → many', topic: 'plural', color: 'orange',
+        instr: 'Write the plural.',
+        hint: 'Больше одного — добавляем {e|-s}. Особые слова: person → people, child → children.',
+        wrongHint: 'Больше одного — добавь {e|-s}.',
+        items: [
+          { text: 'park', full: 'park{e|s}' },
+          { text: 'shop', full: 'shop{e|s}' },
+          { text: 'street', full: 'street{e|s}' },
+          { text: 'bus', full: 'bus{e|es}', hint: 'Слово уже кончается на -s, поэтому добавляем {e|-es}.' },
+          { text: 'city', full: 'cit{e|ies}', hint: 'Согласная + y → меняем y на {e|-ies}.' },
+          { text: 'cinema', full: 'cinema{e|s}' },
+          { text: 'landscape', full: 'landscape{e|s}' },
+          { text: 'friend', full: 'friend{e|s}' },
+          { text: 'person', full: 'people', hint: 'Это особое слово — загляни в подсказку-лампочку.' },
+          { text: 'child', full: 'children', hint: 'Это особое слово — загляни в подсказку-лампочку.' }
+        ] },
+
+      { id: 'ex8', type: 'choice', title: 'Find the -s', topic: 'plural', color: 'lavender',
+        instr: 'Choose the correct word.',
+        items: [
+          { text: 'There are two ___ in my town.', options: ['park', 'parks'], answer: 'parks', full: 'There are two park{e|s} in my town.', hint: 'two — значит больше одного.' },
+          { text: 'I have three ___.', options: ['friend', 'friends'], answer: 'friends', full: 'I have three friend{e|s}.', hint: 'three — больше одного.' },
+          { text: 'There is a ___ near my house.', options: ['shop', 'shops'], answer: 'shop', full: 'There is {a|a} shop near my house.', hint: '{v|There is} {a|a} … — значит один.' },
+          { text: 'There are a lot of ___ in the street.', options: ['person', 'people'], answer: 'people', full: 'There are a lot of people in the street.', hint: 'Много людей — особое слово, не person.' }
+        ] },
+
+      { id: 'ex9', type: 'choice', title: 'a / an / the / —', topic: 'articles', color: 'mustard',
+        instr: 'Choose a, an, the or — (no article).', options: ['a', 'an', 'the', '—'],
+        hint: '{a|a / an} — один, какой-то, впервые; {a|an} — перед гласным звуком; {a|the} — тот самый, уже понятно какой; — — имена, города и много предметов «вообще».',
+        items: [
+          { text: 'I live in ___ city.', answer: 'a', full: 'I live in {a|a} city.', hint: 'Один какой-то город, говорим о нём впервые.' },
+          { text: 'It is ___ big house.', answer: 'a', full: 'It is {a|a} big house.', hint: 'Один дом, впервые. big начинается с согласного звука.' },
+          { text: 'I have ___ apple.', answer: 'an', full: 'I have {a|an} apple.', hint: 'apple начинается с гласного звука.' },
+          { text: 'Sarah lives on ___ farm.', answer: 'a', full: 'Sarah lives on {a|a} farm.', hint: 'Одна какая-то ферма.' },
+          { text: '___ London is big.', answer: '—', full: 'London is big. (без артикля)', hint: 'London — название города.' },
+          { text: 'I like ___ animals.', answer: '—', full: 'I like animals. (без артикля)', hint: 'animals — много животных вообще.' },
+          { text: 'There is ___ old cinema in my town.', answer: 'an', full: 'There is {a|an} old cinema in my town.', hint: 'old начинается с гласного звука.' },
+          { text: 'I have a dog. ___ dog is white.', answer: 'the', full: 'I have a dog. {a|The} dog is white.', hint: 'Собаку уже упомянули — понятно, какая.' },
+          { text: 'Look at ___ sun!', answer: 'the', full: 'Look at {a|the} sun!', hint: 'Солнце одно — все знают, какое.' },
+          { text: 'My town has two ___ parks.', answer: '—', full: 'My town has two parks. (без артикля)', hint: 'parks — много, и уже есть число two.' }
+        ] },
+
+      { id: 'ex10', type: 'typeFix', title: 'Fix the mistake', color: 'berry',
+        instr: 'Each sentence has a mistake. Write the correct sentence.',
+        items: [
+          { text: 'The village very quiet.', full: '{s|The village} {v|is} very quiet.', topics: ['to_be'], hint: 'Не хватает глагола {v|am / is / are}.' },
+          { text: 'I live in small town.', full: 'I live in {a|a} small town.', topics: ['articles'], hint: 'Один какой-то город — перед small не хватает артикля.' },
+          { text: 'There are two cinema in my city.', full: 'There are two cinema{e|s} in my city.', topics: ['plural'], hint: 'two — больше одного. Что добавляем к cinema?' },
+          { text: 'In my town many shops.', full: '{v|There are} many shop{e|s} in my town.', alts: ['In my town there are many shops.'], topics: ['there_is_are'], hint: 'Чтобы сказать «есть», нужна конструкция {v|there is / there are}.' },
+          { text: 'There is a lot of parks.', full: 'There {v|are} a lot of park{e|s}.', topics: ['there_is_are'], hint: 'park{e|s} — много. is или are?' },
+          { text: 'My sister 10 and she is student.', full: '{s|My sister} {v|is} 10 and she is {a|a} student.', topics: ['to_be', 'articles'], hint: 'Здесь две ошибки: не хватает глагола после My sister и артикля перед student.' }
+        ] },
+
+      { id: 'ex11', type: 'writing', title: 'My town', topic: 'writing', color: 'olive',
+        instr: 'Write 5–6 sentences about your town or city. Are you a city mouse or a country mouse?',
+        hint: 'Пиши простыми предложениями. Отмечай пункты чек-листа справа, когда они уже есть в тексте.',
+        sample: 'I live in a big city. It is noisy, but there are a lot of parks…',
+        checklist: [
+          '{v|am / is / are} — 2 раза',
+          '{v|there is} — 1 раз',
+          '{v|there are} — 1 раз',
+          '2 слова во множественном числе с {e|-s}',
+          '{a|a / an} — 2 раза',
+          '2 фразы из упражнения 1'
+        ] }
+    ]
+  };
+
+  Trainer.mount(PAGE);
+  </script>
+</body>
+</html>

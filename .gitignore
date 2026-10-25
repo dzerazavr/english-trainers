@@ -1,0 +1,5 @@
+# служебные файлы редактора и Claude — на сайт не нужны
+.claude/
+.DS_Store
+Thumbs.db
+desktop.ini

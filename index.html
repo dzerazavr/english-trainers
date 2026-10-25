@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тренажёры английского · @dzerazavr</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/theme.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <div class="page-head__top">
+        <span class="kicker">@dzerazavr</span>
+      </div>
+      <h1 class="page-title">Тренажёры английского</h1>
+      <p class="page-sub">Выбери страницу, которую прислал учитель. Задания можно проходить в любом порядке и сколько угодно раз.</p>
+    </header>
+
+    <h2 class="section-title">Работа над ошибками</h2>
+    <div class="tiles">
+      <a class="tile" data-color="orange" href="lessons/spotlight7-u01-errors/">
+        <span class="tile__tag">Spotlight 7 · Урок 1</span>
+        <h3 class="tile__title">City mouse or country mouse? — Fix it!</h3>
+        <p class="tile__text">am / is / are, there is / there are, -s во множественном числе, a / an / the</p>
+      </a>
+    </div>
+
+    <h2 class="section-title">Теория</h2>
+    <div class="tiles">
+      <div class="tile tile--soon" data-color="lavender">
+        <span class="tile__tag">Скоро</span>
+        <h3 class="tile__title">Страницы с теорией</h3>
+        <p class="tile__text">Здесь появятся правила с примерами.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ссылки каталога сохраняют ?s=…&n=…, чтобы ученик не терялся
+    (function () {
+      if (!location.search) return;
+      document.querySelectorAll('a.tile').forEach(function (a) {
+        a.href = a.getAttribute('href') + location.search;
+      });
+    })();
+  </script>
+</body>
+</html>

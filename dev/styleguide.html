@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стайлгайд и проверка отправки</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/theme.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="page-head">
+      <div class="page-head__top">
+        <span class="kicker">Служебная страница · для учителя</span>
+        <span class="hello" id="hello">Hi!</span>
+      </div>
+      <h1 class="page-title">Стайлгайд Whimsical Retro</h1>
+      <p class="page-sub">Как выглядят элементы тренажёров. Внизу — кнопка тестовой отправки в Google Таблицу.</p>
+      <div class="progress-bar">
+        <div class="progress" aria-hidden="true">
+          <span class="progress__seg is-done"></span><span class="progress__seg is-done has-errors"></span>
+          <span class="progress__seg is-current"></span><span class="progress__seg"></span><span class="progress__seg"></span>
+        </div>
+        <div class="progress__label">Задание 3 из 5</div>
+      </div>
+    </header>
+
+    <section class="ex" data-color="olive">
+      <div class="ex__tab"><span class="ex__num">1</span> Words</div>
+      <div class="ex__card">
+        <p class="ex__instr">Match the phrases with their translations.</p>
+        <details class="hint"><summary>Подсказка</summary><div class="hint__body">Перетащи карточку с переводом к фразе. Можно и кликом: сначала карточка, потом место.</div></details>
+        <div class="bank">
+          <span class="chip" tabindex="0">свежий воздух</span>
+          <span class="chip is-selected" tabindex="0">тишина и покой</span>
+          <span class="chip" tabindex="0">красивые пейзажи</span>
+        </div>
+        <ul class="items">
+          <li class="item"><span class="item__n">1</span><div class="item__body item__line">fresh air &nbsp;<span class="drop is-target"></span></div></li>
+          <li class="item"><span class="item__n">2</span><div class="item__body item__line">peace and quiet &nbsp;<span class="drop is-correct"><span class="chip is-correct" aria-disabled="true">тишина и покой</span></span>
+            <div class="fb fb--ok"><span class="fb__icon"></span><span><span class="praise">Exactly!</span></span></div></div></li>
+        </ul>
+        <div class="ex__actions"><button class="btn">Проверить</button><span class="ex__score">1 из 5</span></div>
+      </div>
+    </section>
+
+    <section class="ex" data-color="orange">
+      <div class="ex__tab"><span class="ex__num">3</span> am / is / are</div>
+      <div class="ex__card">
+        <p class="ex__instr">Choose am, is or are.</p>
+        <ul class="items">
+          <li class="item"><span class="item__n">1</span><div class="item__body">
+            <div class="item__line">I ___ 13. &nbsp;<span class="pills"><button class="pill is-correct">am</button><button class="pill">is</button><button class="pill">are</button></span></div>
+            <div class="fb fb--ok"><span class="fb__icon"></span><span><span class="praise">Great!</span></span></div>
+          </div></li>
+          <li class="item"><span class="item__n">2</span><div class="item__body">
+            <div class="item__line">The streets ___ crowded. &nbsp;<span class="pills"><button class="pill">am</button><button class="pill is-wrong">is</button><button class="pill">are</button></span></div>
+            <div class="fb fb--bad"><span class="fb__icon"></span><span>Улиц много — значит <span class="g-verb">are</span>. Попробуй ещё раз.</span></div>
+          </div></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="ex" data-color="mustard">
+      <div class="ex__tab"><span class="ex__num">4</span> Fix the mistake</div>
+      <div class="ex__card">
+        <p class="ex__instr">Each sentence has a mistake. Write the correct sentence.</p>
+        <ul class="items">
+          <li class="item"><span class="item__n">1</span><div class="item__body">
+            <div>The village very quiet.</div>
+            <input class="input is-wrong" value="The village very quiet">
+            <div class="fb fb--show"><span class="fb__icon"></span><span>Правильно: <span class="g-art">The</span> <span class="g-subj">village</span> <span class="g-verb">is</span> very quiet.</span></div>
+          </div></li>
+        </ul>
+        <div class="legend" style="margin-top:18px">
+          <span><span class="g-subj">village</span> подлежащее</span>
+          <span><span class="g-verb">is</span> глагол</span>
+          <span>park<span class="g-end">s</span> окончание</span>
+          <span><span class="g-art">a</span> артикль</span>
+          <span><span class="g-was">two cinema</span> было</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="ex" data-color="lavender">
+      <div class="ex__tab"><span class="ex__num">✓</span> Проверка отправки</div>
+      <div class="ex__card">
+        <p class="ex__instr">Тестовая отправка в Google Таблицу</p>
+        <p class="muted">Отправляет одну строку в Answers и одну в Sessions от имени текущего ученика (для проверки откройте страницу с <code>?s=test</code>).</p>
+        <div class="ex__actions">
+          <button class="btn btn--olive" id="send-test">Отправить тест</button>
+          <span class="status" id="status" hidden></span>
+        </div>
+        <p class="small muted" id="queue-info" style="margin-top:14px"></p>
+      </div>
+    </section>
+  </main>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/tracker.js"></script>
+  <script>
+    Tracker.start({ pageId: 'dev-styleguide', pageTitle: 'Стайлгайд (тест)' }).then(function (st) {
+      document.getElementById('hello').textContent = 'Hi, ' + st.name + '!';
+    });
+
+    var statusEl = document.getElementById('status');
+    Tracker.onStatus(function (st) {
+      var cls = { sent: 'status--ok', sending: 'status--wait', queued: 'status--bad', not_configured: 'status--wait' }[st.state];
+      statusEl.hidden = !st.text;
+      statusEl.className = 'status ' + (cls || '');
+      statusEl.textContent = st.text;
+      document.getElementById('queue-info').textContent =
+        'В очереди на этом устройстве: ' + st.pending + (st.error ? ' · последняя ошибка: ' + st.error : '');
+    });
+
+    document.getElementById('send-test').addEventListener('click', function () {
+      Tracker.sendAnswers([{
+        exercise_id: 'test', exercise_title: 'Test', item_id: 'test-1',
+        prompt: 'I ___ 13.', student_answer: 'am', correct_answer: 'am',
+        is_correct: true, attempt: 1, topic: 'to_be'
+      }]);
+      Tracker.sendSession({ score: 1, max_score: 1, mistakes_count: 0, mistakes_by_topic: {} });
+    });
+  </script>
+</body>
+</html>
