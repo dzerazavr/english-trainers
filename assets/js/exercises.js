@@ -473,15 +473,17 @@
   }
 
   // --- typeFix и typeWord: напечатать ответ ---
+  // typeWord может спрашивать несколько форм сразу: item.forms = [['went'], ['gone']],
+  // подписи полей — ex.formLabels = ['V2', 'V3']. Засчитывается, только если верны все формы.
   function inputEngine(ex, items, ctx, kind) {
     const list = h('ol', { class: 'items' });
     const inputs = [];
-    items.forEach((it, i) => {
+    const makeInput = (it, label) => {
       const input = h('input', {
         type: 'text', class: 'input' + (kind === 'word' ? ' input--word' : ''), lang: 'en',
         autocomplete: 'off', autocapitalize: 'off', autocorrect: 'off', spellcheck: 'false',
-        'aria-label': kind === 'word' ? 'Множественное число от ' + it.text : 'Исправленное предложение',
-        placeholder: kind === 'word' ? '' : 'Напиши предложение целиком'
+        'aria-label': kind === 'word' ? (label ? label + ' от ' + it.text : 'Форма слова ' + it.text) : 'Исправленное предложение',
+        placeholder: kind === 'word' ? (label || '') : 'Напиши предложение целиком'
       });
       input.addEventListener('input', () => { input.classList.remove('is-wrong'); ctx.clearItem(it); });
       input.addEventListener('keydown', e => {
@@ -491,20 +493,103 @@
         if (next) next.focus(); else ctx.check();
       });
       inputs.push(input);
-      it._input = input;
-      const q = kind === 'word'
-        ? h('div', { class: 'item__q' }, h('span', { class: 'word-src', lang: 'en' }, it.text), h('span', { class: 'arrow', 'aria-hidden': 'true' }, '→'), input)
-        : h('div', null, h('div', { class: 'item__src', lang: 'en' }, it.text), input);
+      return input;
+    };
+    items.forEach((it, i) => {
+      let q;
+      if (kind === 'word') {
+        const labels = ex.formLabels || [];
+        it._inputs = it.forms ? it.forms.map((f, k) => makeInput(it, labels[k])) : [makeInput(it)];
+        const fields = [];
+        it._inputs.forEach((inp, k) => {
+          if (k) fields.push(h('span', { class: 'arrow', 'aria-hidden': 'true' }, '/'));
+          fields.push(inp);
+        });
+        q = h('div', { class: 'item__q' }, h('span', { class: 'word-src', lang: 'en' }, it.text), h('span', { class: 'arrow', 'aria-hidden': 'true' }, '→'), fields);
+      } else {
+        it._inputs = [makeInput(it)];
+        q = h('div', null, h('div', { class: 'item__src', lang: 'en' }, it.text), it._inputs[0]);
+      }
       list.appendChild(itemRow(it, i + 1, q));
     });
     return {
       el: list,
-      getAnswer: it => it._input.value.trim() || null,
+      getAnswer(it) {
+        const vals = it._inputs.map(x => x.value.trim());
+        if (vals.some(v => !v)) return null;
+        return vals.join(' / ');
+      },
+      isCorrect(it, ans) {
+        if (!it.forms) return [it.correct].concat(it.alts).some(a => norm(a) === norm(ans));
+        const vals = it._inputs.map(x => x.value.trim());
+        const nf = s => norm(s).replace(/\s*\/\s*/g, '/');
+        return it.forms.every((variants, k) => variants.some(v => nf(v) === nf(vals[k])));
+      },
       setStatus(it, st) {
-        const inp = it._input;
-        inp.classList.remove('is-wrong', 'is-correct');
-        inp.classList.add(st === 'correct' ? 'is-correct' : 'is-wrong');
-        if (st !== 'wrong') inp.readOnly = true;
+        const vals = it._inputs.map(x => x.value.trim());
+        it._inputs.forEach((inp, k) => {
+          inp.classList.remove('is-wrong', 'is-correct');
+          const fieldOk = !it.forms || it.forms[k].some(v => norm(v) === norm(vals[k]));
+          inp.classList.add(st === 'correct' || (st !== 'correct' && it.forms && fieldOk) ? 'is-correct' : 'is-wrong');
+          if (st !== 'wrong') inp.readOnly = true;
+        });
+      }
+    };
+  }
+
+  // --- link: задание на другом сайте (РЕШУ ОГЭ и т.п.) ---
+  // ex.url, ex.site, ex.todo; items — пропуски [{ n: 29, word: 'RAIN' }].
+  // Ученик вписывает ответы, проверяет их на сайте и сообщает, сколько верных. Сохранить можно один раз.
+  function linkEngine(ex, items) {
+    const answerInputs = items.map(it => h('input', {
+      type: 'text', class: 'input', lang: 'en', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false',
+      'aria-label': 'Ответ ' + it.n + (it.word ? ' (' + it.word + ')' : '')
+    }));
+    const countInput = h('input', {
+      type: 'number', class: 'input input--word', min: '0', max: String(items.length), inputmode: 'numeric',
+      'aria-label': 'Сколько ответов верных', disabled: true, style: 'width:110px'
+    });
+    const refresh = () => {
+      const ready = answerInputs.every(x => x.value.trim());
+      countInput.disabled = !ready || countInput.readOnly;
+      countHint.textContent = ready
+        ? 'теперь проверь ответы на сайте и впиши, сколько верных'
+        : 'сначала впиши все ответы — поле откроется само';
+    };
+    const countHint = h('span', { class: 'small muted' });
+    answerInputs.forEach(x => x.addEventListener('input', refresh));
+    refresh();
+
+    const table = h('div', { class: 'link-grid' }, items.map((it, k) => h('label', { class: 'link-cell' },
+      h('span', { class: 'link-cell__n' }, String(it.n), it.word ? h('span', { class: 'link-cell__w', lang: 'en' }, it.word) : null),
+      answerInputs[k])));
+
+    const el = h('div', null,
+      h('div', { class: 'link-card' },
+        h('div', null,
+          h('p', { class: 'link-card__site' }, ex.site || 'Задание на другом сайте'),
+          ex.todo ? h('p', { class: 'link-card__todo', html: mark(ex.todo) }) : null),
+        h('a', { class: 'btn btn--ghost btn--small', href: ex.url, target: '_blank', rel: 'noopener' }, 'Открыть задание ↗')),
+      h('p', { class: 'small muted', style: 'margin:18px 0 8px' }, 'Шаг 1. Впиши свои ответы:'),
+      table,
+      h('div', { class: 'link-count' },
+        h('span', { style: 'font-weight:600' }, 'Шаг 2. Верных ответов:'), countInput,
+        h('span', null, 'из ' + items.length), countHint));
+
+    return {
+      el,
+      custom: true,
+      submit() {
+        if (answerInputs.some(x => !x.value.trim())) return { error: 'Сначала впиши все ответы.' };
+        const n = Number(countInput.value);
+        if (countInput.value === '' || !Number.isInteger(n) || n < 0 || n > items.length) {
+          return { error: 'Впиши, сколько ответов верных: число от 0 до ' + items.length + '.' };
+        }
+        answerInputs.forEach(x => { x.readOnly = true; });
+        countInput.readOnly = true;
+        countInput.disabled = true;
+        const answers = items.map((it, k) => it.n + ' ' + answerInputs[k].value.trim()).join('; ');
+        return { count: n, answers };
       }
     };
   }
@@ -545,12 +630,29 @@
   }
 
   // --- writing: свободный текст с чек-листом ---
+  // ex.words = [100, 120] — нужный объём, ex.minWords — меньше этого задание не засчитывается,
+  // ex.action = { label, url } — кнопка-ссылка (например, отправить голосовое в Telegram)
   function writingEngine(ex) {
-    const ta = h('textarea', { class: 'input', lang: 'en', spellcheck: 'true', 'aria-label': 'Твой текст', placeholder: 'I live in …' });
-    const count = h('div', { class: 'word-count', 'aria-live': 'polite' }, 'Слов: 0');
+    const ta = h('textarea', { class: 'input', lang: 'en', spellcheck: 'true', 'aria-label': 'Твой текст', placeholder: ex.placeholder || 'I live in …' });
+    const count = h('div', { class: 'word-count', 'aria-live': 'polite' });
     const words = () => (ta.value.match(/[A-Za-zÀ-ɏ']+/g) || []).length;
-    ta.addEventListener('input', () => { count.textContent = 'Слов: ' + words(); });
-    const sample = h('div', { class: 'sample', lang: 'en', hidden: true }, ex.sample || '');
+    const updateCount = () => {
+      const n = words();
+      let text = 'Слов: ' + n;
+      let cls = 'word-count';
+      if (ex.words) {
+        const [lo, hi] = ex.words;
+        text += ' · нужно ' + lo + '–' + hi;
+        if (n >= lo && n <= hi) { cls += ' is-ok'; text += ' ✓'; }
+        else if (n > hi) { cls += ' is-warn'; text += ' · многовато, сократи'; }
+        else if (ex.minWords && n > 0 && n < ex.minWords) { cls += ' is-bad'; text += ' · меньше ' + ex.minWords + ' — 0 баллов'; }
+      }
+      count.className = cls;
+      count.textContent = text;
+    };
+    ta.addEventListener('input', updateCount);
+    updateCount();
+    const sample = h('div', { class: 'sample', lang: 'en', hidden: true, style: 'white-space:pre-line' }, ex.sample || '');
     const sampleBtn = h('button', {
       type: 'button', class: 'btn btn--ghost btn--small',
       onclick: () => { sample.hidden = !sample.hidden; sampleBtn.textContent = sample.hidden ? 'Нужен пример?' : 'Спрятать пример'; }
@@ -559,8 +661,10 @@
       (ex.checklist || []).map(t => h('li', null, h('label', null, h('input', { type: 'checkbox' }), h('span', { html: mark(t) })))));
     return {
       el: h('div', { class: 'writing' },
-        h('div', null, ta, count, ex.sample ? h('div', { style: 'margin-top:14px' }, sampleBtn, sample) : null),
-        h('div', null, h('p', { class: 'small muted', style: 'margin:0 0 8px' }, 'Отмечай, что уже есть в тексте:'), checklist)),
+        h('div', null, ta, count,
+          ex.sample ? h('div', { style: 'margin-top:14px' }, sampleBtn, sample) : null,
+          ex.action ? h('div', { style: 'margin-top:14px' }, h('a', { class: 'btn btn--olive btn--small', href: ex.action.url, target: '_blank', rel: 'noopener' }, ex.action.label)) : null),
+        h('div', null, h('p', { class: 'small muted', style: 'margin:0 0 8px' }, ex.checklistTitle || 'Отмечай, что уже есть в тексте:'), checklist)),
       isWriting: true,
       getText: () => ta.value.trim(),
       words
@@ -575,8 +679,12 @@
     typeWord: (ex, items, ctx) => inputEngine(ex, items, ctx, 'word'),
     order: orderEngine,
     sort: sortEngine,
-    writing: writingEngine
+    writing: writingEngine,
+    link: linkEngine
   };
+
+  // упражнения, которые не дают баллов: письмо и задания, где ex.countsInScore === false
+  const isScored = s => !s.engine.isWriting && s.ex.countsInScore !== false;
 
   // ======================================================================
   //  Страница: шапка, упражнения, проверка, итог, «ошибки ещё раз»
@@ -592,10 +700,13 @@
     const it = Object.assign({}, raw);
     it.raw = raw;
     it.id = raw.id || ex.id + '-' + (i + 1);
-    it.topics = raw.topics || [raw.topic || ex.topic];
-    it.correct = raw.answer != null ? raw.answer : plain(raw.full);
+    it.topics = raw.topics || (raw.topic ? [raw.topic] : ex.topics || [ex.topic]);
+    it.correct = raw.answer != null ? raw.answer
+      : raw.forms ? raw.forms.map(f => f[0]).join(' / ')
+      : raw.full ? plain(raw.full) : '';
     it.alts = raw.alts || [];
     if (raw.full) it.reveal = mark(raw.full);
+    else if (raw.forms) it.reveal = esc(raw.text) + ' → <span class="g-fill">' + esc(it.correct) + '</span>';
     else if (ex.type === 'match') it.reveal = esc(raw.text) + ' — <span class="g-fill">' + esc(it.correct) + '</span>';
     else if (raw.text && raw.text.indexOf('___') >= 0) it.reveal = esc(raw.text).replace('___', '<span class="g-fill">' + esc(it.correct) + '</span>');
     else it.reveal = esc(it.correct);
@@ -645,8 +756,36 @@
       if (!e.getText()) { say(st, 'Сначала напиши хотя бы пару предложений.', 'bad'); return; }
       st.done = true;
       st.btn.textContent = 'Сохранить ещё раз';
-      say(st, 'Сохранено ✓ Текст уйдёт учителю вместе с итогом.', 'ok');
+      const n = e.words();
+      if (st.ex.minWords && n < st.ex.minWords) {
+        say(st, 'Сохранено, но слов ' + n + ': меньше ' + st.ex.minWords + ' — на экзамене это 0 баллов. Допиши и сохрани ещё раз.', 'bad');
+      } else {
+        say(st, 'Сохранено ✓ Текст уйдёт учителю вместе с итогом.', 'ok');
+      }
       complete(st);
+      return;
+    }
+
+    if (e.custom) {
+      const res = e.submit();
+      if (res.error) { say(st, res.error, 'bad'); return; }
+      st.items.forEach((it, k) => {
+        it.done = true;
+        it.selfReported = true;
+        it.attempt = 1;
+        it.points = k < res.count ? 1 : 0;
+      });
+      if (window.Tracker) {
+        Tracker.sendAnswers([{
+          exercise_id: st.ex.id, exercise_title: st.ex.title, item_id: st.ex.id + '-self',
+          prompt: (st.ex.site || st.ex.url) + ' · ' + st.items[0].n + '–' + st.items[st.items.length - 1].n,
+          student_answer: res.answers + ' · верно ' + res.count + ' из ' + st.items.length,
+          correct_answer: 'проверка на сайте', is_correct: res.count === st.items.length,
+          attempt: 1, topic: st.items[0].topics.join('+')
+        }]);
+      }
+      complete(st);
+      updateScore(st);
       return;
     }
 
@@ -709,8 +848,12 @@
     if (!st.engine.isWriting) {
       st.btn.hidden = true;
       const p = points(st.items);
-      say(st, (p === st.items.length ? 'Всё верно с первого раза! ' : 'Задание выполнено. ') +
-        'Баллы: ' + fmt(p) + ' из ' + st.items.length + '.', 'ok');
+      if (st.engine.custom) {
+        say(st, 'Сохранено ✓ Верно ' + p + ' из ' + st.items.length + '.' + (p < st.items.length ? ' Разбери ошибки на сайте.' : ''), 'ok');
+      } else {
+        say(st, (p === st.items.length ? 'Всё верно с первого раза! ' : 'Задание выполнено. ') +
+          'Баллы: ' + fmt(p) + ' из ' + st.items.length + '.', 'ok');
+      }
     }
     const idx = states.indexOf(st);
     st.next.hidden = idx === states.length - 1;
@@ -735,14 +878,14 @@
     const doneCount = states.filter(s => s.done).length;
     ui.progressLabel.textContent = 'Выполнено заданий: ' + doneCount + ' из ' + states.length;
 
-    const scored = states.filter(s => !s.engine.isWriting);
+    const scored = states.filter(isScored);
     const left = scored.filter(s => !s.done).length;
-    const writing = states.find(s => s.engine.isWriting);
+    const writingLeft = states.some(s => s.engine.isWriting && !s.done);
     ui.finishBtn.disabled = left > 0;
     ui.finishText.textContent = left
       ? 'Чтобы увидеть итог, осталось выполнить заданий: ' + left + '.'
-      : (writing && !writing.done
-        ? 'Все задания с баллами готовы! Письменное задание можно сделать до итога — или сразу смотреть результат.'
+      : (writingLeft
+        ? 'Все задания с баллами готовы! Письменные задания можно сделать до итога — или сразу смотреть результат.'
         : 'Всё готово! Нажми, чтобы увидеть результат и отправить его учителю.');
   }
 
@@ -752,7 +895,11 @@
     const exx = Object.assign({}, ex, { _uid: ex.id + '-' + renderNo });
     const ctx = { check: () => check(st), clearItem };
     st.engine = ENGINES[ex.type](exx, items, ctx);
-    st.btn = h('button', { type: 'button', class: 'btn', onclick: () => check(st) }, st.engine.isWriting ? 'Готово' : 'Проверить');
+    st.btn = h('button', { type: 'button', class: 'btn', onclick: () => check(st) },
+      st.engine.isWriting ? 'Готово' : st.engine.custom ? 'Сохранить результат' : 'Проверить');
+    const meta = [];
+    if (ex.badge) meta.push(h('span', { class: 'ex__badge' }, ex.badge));
+    if (ex.time) meta.push(h('span', { class: 'ex__time' }, ex.time));
     st.next = h('button', {
       type: 'button', class: 'btn btn--ghost btn--small', hidden: true,
       onclick: () => {
@@ -765,7 +912,12 @@
     st.section = h('section', { class: 'ex', 'data-color': ex.color || 'olive', id: 'ex-' + ex.id, 'aria-label': 'Упражнение ' + (ex.num || i + 1) },
       h('div', { class: 'ex__tab' }, h('span', { class: 'ex__num' }, String(ex.num || i + 1)), h('span', { lang: 'en' }, ex.title)),
       h('div', { class: 'ex__card' },
+        meta.length ? h('div', { class: 'ex__meta' }, meta) : null,
         h('p', { class: 'ex__instr', lang: 'en' }, ex.instr),
+        ex.letter ? h('div', { class: 'letter', lang: 'en' },
+          ex.letter.head ? h('div', { class: 'letter__head' }, ex.letter.head) : null,
+          h('div', { class: 'letter__body' }, ex.letter.body)) : null,
+        ex.task ? h('p', { class: 'ex__task', lang: 'en' }, ex.task) : null,
         ex.hint ? h('details', { class: 'hint' }, h('summary', null, 'Подсказка'), h('div', { class: 'hint__body', html: mark(ex.hint) })) : null,
         st.engine.el,
         h('div', { class: 'ex__actions' }, st.btn, st.next, st.score, st.msg)));
@@ -786,13 +938,16 @@
   // ---------- итог ----------
 
   function finish() {
-    const scored = states.filter(s => !s.engine.isWriting);
+    const scored = states.filter(isScored);
     const all = [];
     scored.forEach(s => s.items.forEach(it => all.push({ it, ex: s.ex })));
     const score = all.reduce((sum, x) => sum + x.it.points, 0);
     const max = all.length;
     const percent = max ? Math.round(score / max * 100) : 0;
-    const mistakes = all.filter(x => x.it.points < 1);
+    // ошибки во внешних заданиях считаем в баллах и темах, но в список «Мои ошибки» не выводим:
+    // какие именно пункты неверны, видно только на том сайте
+    const mistakes = all.filter(x => x.it.points < 1 && !x.it.selfReported);
+    const mistakesCount = all.filter(x => x.it.points < 1).length;
 
     const topics = {};
     const byTopic = {};
@@ -803,16 +958,19 @@
       if (it.points < 1) byTopic[t] = (byTopic[t] || 0) + 1;
     }));
 
-    const writing = states.find(s => s.engine.isWriting);
-    const freeText = writing ? writing.engine.getText() : '';
+    // все письменные задания страницы уходят учителю одним текстом, с заголовками
+    const writings = states.filter(s => s.engine.isWriting && s.engine.getText());
+    const freeText = writings.length === 1 && writings.length === states.filter(s => s.engine.isWriting).length
+      ? writings[0].engine.getText()
+      : writings.map(s => '[' + s.ex.num + '. ' + s.ex.title + ']\n' + s.engine.getText()).join('\n\n');
 
     if (window.Tracker) {
       Tracker.sendSession({
         score, max_score: max, percent,
-        mistakes_count: mistakes.length, mistakes_by_topic: byTopic, free_text: freeText
+        mistakes_count: mistakesCount, mistakes_by_topic: byTopic, free_text: freeText
       });
     }
-    renderResults({ score, max, percent, mistakes, topics, freeText });
+    renderResults({ score, max, percent, mistakes, mistakesCount, topics, freeText });
   }
 
   function renderResults(r) {
@@ -837,7 +995,9 @@
           h('div', { lang: 'en' },
             h('span', { class: 'g-was' }, it.firstWrong == null ? '—' : String(it.firstWrong)),
             ' → ', h('span', { html: it.reveal })))))
-      : h('p', null, 'Ошибок нет. Wow!');
+      : h('p', null, r.mistakesCount
+        ? 'Здесь ошибок нет. Ошибки из заданий на других сайтах разбери там же — там видно, какие ответы неверны.'
+        : 'Ошибок нет. Wow!');
 
     const actions = h('div', { class: 'ex__actions' },
       r.mistakes.length ? h('button', { type: 'button', class: 'btn', onclick: retry }, 'Пройти ошибки ещё раз') : null,
@@ -875,7 +1035,7 @@
 
   function retry() {
     const list = states
-      .filter(s => !s.engine.isWriting && s.items.some(it => it.points < 1))
+      .filter(s => isScored(s) && !s.engine.custom && s.items.some(it => it.points < 1))
       .map(s => Object.assign({}, s.ex, {
         items: s.items.filter(it => it.points < 1).map(it => Object.assign({}, it.raw, { id: it.id }))
       }));
@@ -892,6 +1052,7 @@
   function mount(p, rootEl) {
     page = p;
     page.exercises.forEach((ex, i) => { ex.num = ex.num || i + 1; });
+    Object.assign(TOPICS, p.topicNames || {});
     const root = rootEl || document.getElementById('app') || document.body;
 
     ui.hello = h('span', { class: 'hello', lang: 'en' }, 'Hi!');
@@ -909,7 +1070,10 @@
         h('div', { class: 'page-head__top' }, h('span', { class: 'kicker' }, p.kicker || ''), ui.hello),
         h('h1', { class: 'page-title', lang: 'en' }, p.title),
         ui.sub,
-        h('div', { class: 'legend', style: 'margin-top:14px' },
+        p.notice || p.due ? h('div', { class: 'notice' },
+          p.due ? h('span', { class: 'notice__due' }, 'срок: ' + p.due) : null,
+          p.notice ? h('span', { html: mark(p.notice) }) : null) : null,
+        p.legend === false ? null : h('div', { class: 'legend', style: 'margin-top:14px' },
           h('span', null, h('span', { class: 'g-subj' }, 'кто/что'), ' подлежащее'),
           h('span', null, h('span', { class: 'g-verb' }, 'is'), ' глагол'),
           h('span', null, 'park', h('span', { class: 'g-end' }, 's'), ' окончание'),

@@ -285,6 +285,7 @@ code { font-size: .85em; }
   border-left: 4px solid var(--mustard);
   border-radius: 0 14px 14px 0;
   font-size: 18px;
+  white-space: pre-line;
   animation: fade-in .3s var(--ease);
 }
 
@@ -549,6 +550,38 @@ textarea.input { min-height: 220px; resize: vertical; line-height: 1.6; }
 .checklist input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--olive-deep); flex: none; }
 .checklist input:checked + span { text-decoration: line-through; color: var(--ink-soft); }
 .sample { margin-top: 12px; padding: 12px 16px; background: #FCF1D6; border-radius: 14px; font-style: italic; }
+
+/* метки времени и «каждый день» у упражнения */
+.ex__meta { display: flex; flex-wrap: wrap; gap: 8px; margin: -6px 0 12px; }
+.ex__badge, .ex__time { font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 999px; }
+.ex__badge { background: var(--mustard-tint); color: var(--mustard-ink); }
+.ex__time { background: var(--cream); color: var(--ink-soft); }
+.ex__instr { white-space: pre-line; }
+.ex__task { font-size: 18px; white-space: pre-line; margin: 14px 0 0; }
+
+/* письмо от друга по переписке */
+.letter { margin: 16px 0 6px; padding: 18px 22px; background: #FFFCF5; border: 2px dashed var(--line); border-radius: 18px; font-size: 18px; }
+.letter__head { font-size: 15px; color: var(--ink-soft); white-space: pre-line; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 1px solid var(--line); }
+.letter__body { white-space: pre-line; font-style: italic; }
+
+/* счётчик слов */
+.word-count.is-ok { color: var(--olive-ink); font-weight: 600; }
+.word-count.is-warn { color: var(--mustard-ink); font-weight: 600; }
+.word-count.is-bad { color: var(--orange-ink); font-weight: 600; }
+
+/* напоминание наверху страницы */
+.notice { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin-top: 16px; padding: 12px 18px; background: var(--paper); border: 2px solid var(--ink); border-radius: 18px; box-shadow: 4px 4px 0 var(--lavender); font-size: 17px; }
+.notice__due { font-weight: 700; padding: 3px 12px; border-radius: 999px; background: var(--berry); color: var(--paper); font-size: 14px; }
+
+/* задание на другом сайте */
+.link-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 20px; background: var(--lavender-tint); border-radius: 18px; }
+.link-card__site { margin: 0; font-weight: 700; }
+.link-card__todo { margin: 4px 0 0; font-size: 16px; }
+.link-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.link-cell { display: grid; gap: 4px; }
+.link-cell__n { display: flex; align-items: baseline; gap: 8px; font: italic 600 20px/1.2 var(--font-head); color: var(--c-text); }
+.link-cell__w { font: 600 12px/1 var(--font-body); letter-spacing: .06em; color: var(--ink-soft); }
+.link-count { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-top: 18px; }
 
 /* итог */
 .finish { text-align: center; margin: 56px 0 24px; }

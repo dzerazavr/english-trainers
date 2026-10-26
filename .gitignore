@@ -3,3 +3,6 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# макеты будущего сайта (живут в артефакте claude.ai)
+design-site/

@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Word Formation: Adjectives · School — домашка ОГЭ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../assets/css/theme.css">
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="../../assets/js/config.js"></script>
+  <script src="../../assets/js/tracker.js"></script>
+  <script src="../../assets/js/exercises.js"></script>
+  <script>
+  /* ===================== ДАННЫЕ СТРАНИЦЫ =====================
+     Домашка ОГЭ 2027 · Модуль 1 · Урок 5 (ученик: stepan)
+     ========================================================== */
+  var PAGE = {
+    id: 'oge27-m1-l05-homework',
+    title: 'Word Formation: Adjectives · School',
+    kicker: 'ОГЭ 2027 · Модуль 1 · Урок 5 · домашка',
+    subtitle: 'Письмо Jim, словообразование 29–34, грамматика 20–28, монолог про лучшего друга.',
+    due: '30.10',
+    notice: 'Письменное — сюда, монолог — голосовым в Telegram. Порядок: 1 → 2 → 3 → 4, задания 5 и 6 — каждый день по 5 минут. Всего ≈ 50 минут.',
+    legend: false,
+    topicNames: {
+      writing_email: 'письмо (задание 35)',
+      word_formation: 'словообразование (29–34)',
+      grammar_20_28: 'грамматика (20–28)',
+      past_simple: 'Past Simple',
+      past_continuous: 'Past Continuous',
+      irregular_verbs: 'неправильные глаголы',
+      vocab_family: 'лексика «Семья»',
+      speaking_monologue: 'монолог (устная часть, задание 3)'
+    },
+    exercises: [
+
+      { id: 'ex1', type: 'writing', title: 'Email to Jim', topic: 'writing_email', color: 'berry', time: '≈ 25 минут',
+        instr: 'You have received an email message from your English-speaking pen-friend Jim:',
+        letter: {
+          head: 'From: Jim@mail.uk\nTo: Russian_friend@oge.ru\nSubject: School subjects',
+          body: '… Next month I\'ll choose my subjects for the next year. I want to continue learning languages. I also need to improve my academic results in general.\n… How many lessons do you usually have a day? What foreign languages can you learn at school? What subject do you find the most important for your future career, and why? …'
+        },
+        task: 'Write a message to Jim and answer his 3 questions.\nWrite 100–120 words. Remember the rules of email writing.',
+        hint: 'Вопрос 3 — «and why?». Обязательно назови причину: because… Используй прилагательные с урока: useful, interesting, important.',
+        words: [100, 120], minWords: 90,
+        placeholder: 'Dear Jim,',
+        checklistTitle: 'Перед отправкой проверь:',
+        sample: 'Dear Jim,\nThanks for your email. I was glad to hear from you.\nIn your email you ask me some questions and I want to answer them. Well, …',
+        checklist: [
+          'Слов 100–120 (счётчик под полем)',
+          'Dear Jim, — с запятой, на отдельной строке',
+          'Благодарность за письмо',
+          '3 ответа по 2–3 предложения, в 3-м — because',
+          'Надежда на контакт + Best wishes, + имя',
+          'Везде есть глагол: I am…, it is…'
+        ] },
+
+      { id: 'ex2', type: 'link', title: 'Word formation 29–34', topic: 'word_formation', color: 'olive', time: '≈ 8 минут',
+        instr: 'Read the text. Form words that fit the gaps (29–34).',
+        hint: '1. Какая часть речи нужна? Смотри на слова рядом.\n2. Подбери суффикс: -ful, -ous, -y, -al, -ive…\n3. Нужен ли отрицательный смысл? un-, dis-, -less\n4. Проверь буквы: rain → rainy',
+        site: 'РЕШУ ОГЭ № 973 · словообразование',
+        url: 'https://en-oge.sdamgia.ru/problem?id=973',
+        todo: 'Реши задания 29–34 (первый пропуск — RAIN). Ответы на сайте не проверяй, пока не впишешь их здесь.',
+        items: [
+          { n: 29, word: 'RAIN' }, { n: 30, word: 'LUCKY' }, { n: 31, word: 'FANTASY' },
+          { n: 32, word: 'TURKEY' }, { n: 33, word: 'ARRIVE' }, { n: 34, word: 'CARE' }
+        ] },
+
+      // в тексте встречаются Past Simple, Past Continuous и to be, но какой пропуск на что — заранее не размечено,
+      // поэтому баллы идут в одну общую тему
+      { id: 'ex3', type: 'link', title: 'Grammar 20–28', topic: 'grammar_20_28', color: 'lavender', time: '≈ 10 минут',
+        instr: 'Read the text. Change the words in capitals so that they fit the gaps (20–28).',
+        hint: '1. Прочитай весь текст: когда всё происходит?\n2. Маркеры: yesterday, when, while, now, every day\n3. Нет другого глагола → нужен be: was / were, am / is / are\n4. Пиши без пробелов, проверь каждую букву',
+        site: 'РЕШУ ОГЭ № 824 · грамматика',
+        url: 'https://en-oge.sdamgia.ru/problem?id=824',
+        todo: 'Реши задания 20–28 (текст про Bella и контрольную). Ответы на сайте не проверяй, пока не впишешь их здесь.',
+        items: [
+          { n: 20, word: 'ENJOY' }, { n: 21, word: 'NOT BE' }, { n: 22, word: 'LEAVE' },
+          { n: 23, word: 'SHE' }, { n: 24, word: 'WRITE' }, { n: 25, word: 'BAD' },
+          { n: 26, word: 'PRINT' }, { n: 27, word: 'TWO' }, { n: 28, word: 'NOT CAN' }
+        ] },
+
+      { id: 'ex4', type: 'writing', title: 'Monologue: your best friend', topic: 'speaking_monologue', color: 'orange', time: '≈ 10 минут',
+        instr: 'You are going to give a talk about your best friend. You will have to start in 1.5 minutes and speak for not more than 2 minutes (10–12 sentences). Remember to say:\n– what people need friends for;\n– how long you and your friend have known each other;\n– what you enjoy doing together;\n– what your attitude to friendship is.\nYou have to talk continuously.',
+        hint: 'По 2–3 фразы на пункт. Пункт 2 — Past Simple: met, went.',
+        placeholder: 'I\'m going to talk about my best friend.',
+        checklistTitle: 'Отмечай по ходу:',
+        sample: 'I\'m going to talk about my best friend.',
+        action: { label: 'Отправить голосовое в Telegram ↗', url: 'https://t.me/dzerazavr' },
+        checklist: [
+          'Вступление: I\'m going to talk about my best friend.',
+          'Пункт 1: People need friends because …',
+          'Пункт 2: We met … years ago at …',
+          'Пункт 3: We enjoy playing / watching …',
+          'Пункт 4: As for friendship, I think it is very important …',
+          'Заключение: That\'s all I wanted to say about my best friend.',
+          'Записал монолог не дольше 2 минут и отправил голосовым в Telegram'
+        ] },
+
+      { id: 'ex5', type: 'typeWord', title: '30 irregular verbs', topic: 'irregular_verbs', color: 'mustard', badge: 'каждый день · 5 минут',
+        instr: 'Write the Past Simple (V2) and Past Participle (V3).',
+        hint: 'Сначала повтори список, потом закрой его и проверь себя.',
+        wrongHint: 'Это неправильный глагол — окончание -ed не подходит. Зелёное поле уже верно, исправь красное.',
+        formLabels: ['V2', 'V3'],
+        items: [
+          { text: 'be', forms: [['was / were', 'was/were', 'was, were', 'was were', 'was', 'were'], ['been']] },
+          { text: 'have', forms: [['had'], ['had']] },
+          { text: 'do', forms: [['did'], ['done']] },
+          { text: 'go', forms: [['went'], ['gone']] },
+          { text: 'get', forms: [['got'], ['got', 'gotten', 'got / gotten', 'got/gotten']] },
+          { text: 'make', forms: [['made'], ['made']] },
+          { text: 'say', forms: [['said'], ['said']] },
+          { text: 'see', forms: [['saw'], ['seen']] },
+          { text: 'come', forms: [['came'], ['come']] },
+          { text: 'take', forms: [['took'], ['taken']] },
+          { text: 'know', forms: [['knew'], ['known']] },
+          { text: 'think', forms: [['thought'], ['thought']] },
+          { text: 'give', forms: [['gave'], ['given']] },
+          { text: 'find', forms: [['found'], ['found']] },
+          { text: 'tell', forms: [['told'], ['told']] },
+          { text: 'become', forms: [['became'], ['become']] },
+          { text: 'leave', forms: [['left'], ['left']] },
+          { text: 'feel', forms: [['felt'], ['felt']] },
+          { text: 'bring', forms: [['brought'], ['brought']] },
+          { text: 'begin', forms: [['began'], ['begun']] },
+          { text: 'keep', forms: [['kept'], ['kept']] },
+          { text: 'meet', forms: [['met'], ['met']] },
+          { text: 'buy', forms: [['bought'], ['bought']] },
+          { text: 'write', forms: [['wrote'], ['written']] },
+          { text: 'read', forms: [['read'], ['read']] },
+          { text: 'speak', forms: [['spoke'], ['spoken']] },
+          { text: 'spend', forms: [['spent'], ['spent']] },
+          { text: 'teach', forms: [['taught'], ['taught']] },
+          { text: 'win', forms: [['won'], ['won']] },
+          { text: 'choose', forms: [['chose'], ['chosen']] }
+        ] },
+
+      { id: 'ex6', type: 'match', title: 'Family members', topic: 'vocab_family', color: 'olive', badge: 'каждый день · 5 минут', roundSize: 6,
+        instr: 'Match the words with their translations.',
+        wrongHint: 'Не та пара. Попробуй ещё раз.',
+        items: [
+          { text: 'relatives', answer: 'родственники' },
+          { text: 'parents', answer: 'родители' },
+          { text: 'child, children', answer: 'ребёнок, дети' },
+          { text: 'daughter', answer: 'дочь' },
+          { text: 'son', answer: 'сын' },
+          { text: 'siblings', answer: 'родные братья/сёстры' },
+          { text: 'twin', answer: 'близнец' },
+          { text: 'aunt', answer: 'тётя' },
+          { text: 'uncle', answer: 'дядя' },
+          { text: 'niece', answer: 'племянница' },
+          { text: 'nephew', answer: 'племянник' },
+          { text: 'cousin', answer: 'двоюродный брат/сестра' },
+          { text: 'grandparents', answer: 'бабушка и дедушка' },
+          { text: 'grandchild', answer: 'внук' },
+          { text: 'groom', answer: 'жених на свадьбе' },
+          { text: 'bride', answer: 'невеста на свадьбе' },
+          { text: 'wife', answer: 'жена' },
+          { text: 'husband', answer: 'муж' }
+        ] }
+    ]
+  };
+
+  Trainer.mount(PAGE);
+  </script>
+</body>
+</html>
